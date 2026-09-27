@@ -13,10 +13,15 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Install X11 dependencies for Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-dev libxext-dev libxrender-dev libxtst-dev libxi-dev xvfb
 
       - name: Setup JDK
         uses: actions/setup-java@v4
@@ -35,21 +40,25 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/libs.versions.toml') }}
 
-      - name: List Gradle Tasks
-        run: .\gradlew.bat tasks --all --no-daemon
-
-      - name: Build Compose Desktop Package (MSI)
-        run: .\gradlew.bat packageMsi --no-daemon
-
-      - name: Find Portable App Directory
-        id: artifacts
+      - name: Build Fat JAR
         run: |
-          $dir = (Get-ChildItem desktop/build/compose/binaries/main/app -Directory | Select-Object -First 1).FullName
-          echo "artifact_dir=$dir" >> $env:GITHUB_OUTPUT
+          xvfb-run -a ./gradlew jar --no-daemon
+
+      - name: Find JAR
+        id: jar
+        run: |
+          jar=$(find desktop/build/libs -name '*.jar' | head -1)
+          echo "jar_path=$jar" >> $GITHUB_OUTPUT
+          echo "jar_name=$(basename $jar)" >> $GITHUB_OUTPUT
+
+      - name: Create Portable App with jpackage
+        run: |
+          jpackage --type app-image             --input desktop/build/libs             --main-jar ${{ steps.jar.outputs.jar_name }}             --main-class com.foss.aihub.pc.MainKt             --name "AI Hub PC"             --app-version ${{ github.event.inputs.version || '1.0.0' }}             --dest portable-output             --java-options "-Xmx1g"
 
       - name: Zip Portable App
         run: |
-          Compress-Archive -Path "${{ steps.artifacts.outputs.artifact_dir }}\*" -DestinationPath "AI-Hub-PC-Portable.zip"
+          cd "portable-output/AI Hub PC"
+          zip -r "${{ github.workspace }}/AI-Hub-PC-Portable.zip" .
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
