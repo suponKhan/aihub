@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
-    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "com.foss"
@@ -34,13 +33,7 @@ tasks.withType<Jar> {
             "Main-Class" to "com.foss.aihub.pc.MainKt"
         )
     }
-}
-
-tasks.shadowJar {
-    manifest {
-        attributes(
-            "Main-Class" to "com.foss.aihub.pc.MainKt"
-        )
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
-    archiveClassifier.set("")
 }
