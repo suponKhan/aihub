@@ -39,10 +39,10 @@ jobs:
         run: chmod +x gradlew
       
       - name: List Gradle tasks
-        run: ./gradlew tasks --all --no-daemon
+        run: ./gradlew tasks --all --no-daemon | head -100
       
       - name: Build PC App
-        run: ./gradlew packageRelease --no-daemon
+        run: ./gradlew desktop:packageRelease --no-daemon
       
       - name: Find Artifacts
         id: artifacts
