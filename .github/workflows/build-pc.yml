@@ -35,23 +35,19 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/libs.versions.toml') }}
       
-      - name: Build Portable Windows App
-        run: .\gradlew.bat package --no-daemon
+      - name: Build Fat JAR
+        run: .\gradlew.bat jar --no-daemon
       
-      - name: Find Portable Artifacts
+      - name: Find JAR
         id: artifacts
         run: |
-          $dir = (Get-ChildItem desktop/build/compose/binaries/main/app -Directory | Select-Object -First 1).FullName
-          echo "artifact_dir=$dir" >> $env:GITHUB_OUTPUT
-      
-      - name: Zip Portable App
-        run: |
-          Compress-Archive -Path "${{ steps.artifacts.outputs.artifact_dir }}\*" -DestinationPath "AI-Hub-PC-Portable.zip"
+          $jar = Get-ChildItem desktop/build/libs/*.jar | Select-Object -First 1
+          echo "jar_path=$($jar.FullName)" >> $env:GITHUB_OUTPUT
       
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.event.inputs.version || '1.0.0' }}
           name: AI Hub PC v${{ github.event.inputs.version || '1.0.0' }}
-          files: AI-Hub-PC-Portable.zip
+          files: ${{ steps.artifacts.outputs.jar_path }}
           generate_release_notes: true
