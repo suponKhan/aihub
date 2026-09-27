@@ -1,0 +1,22 @@
+[versions]
+kotlin = "2.1.21"
+compose-desktop = "1.8.2"
+kotlinxSerializationJson = "1.8.1"
+gson = "2.13.0"
+ktorClientCore = "3.9.1"
+ktorClientOkhttp = "3.9.1"
+ktorClientContentNegotiation = "3.9.1"
+ktorSerializationKotlinxJson = "3.9.1"
+
+[libraries]
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+jetbrains-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJsonVersion" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClientCore" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorClientContentNegotiation" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorSerializationKotlinxJson" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+compose-desktop = { id = "org.jetbrains.compose.desktop", version.ref = "compose-desktop" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

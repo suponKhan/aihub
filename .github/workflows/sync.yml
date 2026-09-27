@@ -1,0 +1,34 @@
+name: Sync from Upstream
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Fetch upstream changes
+        run: |
+          git remote add upstream https://github.com/SilentCoderHere/aihub.git
+          git fetch upstream
+          git merge upstream/main --allow-unrelated-histories -m "Auto-sync from upstream" || true
+      
+      - name: Push changes
+        run: |
+          git push origin main || true
