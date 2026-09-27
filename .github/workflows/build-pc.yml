@@ -38,13 +38,13 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
       
-      - name: Build JAR
-        run: ./gradlew :desktop:jar --no-daemon
+      - name: Build PC App
+        run: ./gradlew packageRelease --no-daemon
       
       - name: Find Artifacts
         id: artifacts
         run: |
-          echo "artifact_dir=$(find desktop/build/libs -name '*.jar' | head -1 | xargs dirname)" >> $GITHUB_OUTPUT
+          echo "artifact_dir=$(find desktop/build/compose/binaries -name '*.msi' -o -name '*.dmg' -o -name '*.deb' -o -name '*.jar' | head -1 | xargs dirname)" >> $GITHUB_OUTPUT
       
       - name: Create Release
         uses: softprops/action-gh-release@v2
