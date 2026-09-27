@@ -13,10 +13,15 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Install dependencies for headless Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-dev libxext-dev libxrender-dev libxtst-dev libxi-dev xvfb
 
       - name: Setup JDK
         uses: actions/setup-java@v4
@@ -35,23 +40,20 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/libs.versions.toml') }}
 
-      - name: Build Fat JAR
-        run: .\gradlew.bat jar --no-daemon
-
-      - name: Find JAR
-        id: jar
+      - name: Build Compose Desktop Package
         run: |
-          $jar = Get-ChildItem desktop/build/libs/*.jar | Select-Object -First 1
-          echo "jar_path=$($jar.FullName)" >> $env:GITHUB_OUTPUT
-          echo "jar_name=$($jar.Name)" >> $env:GITHUB_OUTPUT
+          xvfb-run -a ./gradlew package --no-daemon
 
-      - name: Create Portable App with jpackage
+      - name: Find Portable App Directory
+        id: artifacts
         run: |
-          jpackage --type app-image             --input desktop/build/libs             --main-jar ${{ steps.jar.outputs.jar_name }}             --main-class com.foss.aihub.pc.MainKt             --name "AI Hub PC"             --app-version ${{ github.event.inputs.version || '1.0.0' }}             --dest portable-output             --java-options "-Xmx1g"
+          dir=$(find desktop/build/compose/binaries/main/app -maxdepth 1 -type d | head -2 | tail -1)
+          echo "artifact_dir=$dir" >> $GITHUB_OUTPUT
 
       - name: Zip Portable App
         run: |
-          Compress-Archive -Path "portable-output\AI Hub PC\*" -DestinationPath "AI-Hub-PC-Portable.zip"
+          cd "${{ steps.artifacts.outputs.artifact_dir }}"
+          zip -r "${{ github.workspace }}/AI-Hub-PC-Portable.zip" .
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
