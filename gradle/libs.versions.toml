@@ -1,6 +1,7 @@
 [versions]
 kotlin = "2.1.21"
 compose-desktop = "1.8.2"
+composeBom = "2025.02.01"
 kotlinxSerializationJson = "1.8.1"
 gson = "2.13.0"
 ktorClientCore = "3.9.1"
@@ -15,6 +16,15 @@ ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorCli
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClientCore" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorClientContentNegotiation" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorSerializationKotlinxJson" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata" }
+androidx-compose-animation = { group = "androidx.compose.animation", name = "animation" }
+androidx-window = { group = "androidx.window", name = "window" }
+androidx-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
