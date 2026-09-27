@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,19 +35,23 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/libs.versions.toml') }}
       
-      - name: Build PC App
-        run: |
-          ./gradlew desktopBuild --no-daemon
+      - name: Build Portable Windows App
+        run: .\gradlew.bat package --no-daemon
       
-      - name: Find Artifacts
+      - name: Find Portable Artifacts
         id: artifacts
         run: |
-          echo "artifact_dir=$(find desktop/build -name '*.msi' -o -name '*.dmg' -o -name '*.deb' -o -name '*.jar' | head -1 | xargs dirname)" >> $GITHUB_OUTPUT
+          $dir = (Get-ChildItem desktop/build/compose/binaries/main/app -Directory | Select-Object -First 1).FullName
+          echo "artifact_dir=$dir" >> $env:GITHUB_OUTPUT
+      
+      - name: Zip Portable App
+        run: |
+          Compress-Archive -Path "${{ steps.artifacts.outputs.artifact_dir }}\*" -DestinationPath "AI-Hub-PC-Portable.zip"
       
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.event.inputs.version || '1.0.0' }}
           name: AI Hub PC v${{ github.event.inputs.version || '1.0.0' }}
-          files: desktop/build/release/*
+          files: AI-Hub-PC-Portable.zip
           generate_release_notes: true
