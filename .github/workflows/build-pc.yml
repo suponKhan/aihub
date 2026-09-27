@@ -35,9 +35,12 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/libs.versions.toml') }}
       
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+      
       - name: Build PC App
         run: |
-          ./gradlew package --no-daemon
+          ./gradlew :desktop:package --no-daemon
       
       - name: Find Artifacts
         id: artifacts
