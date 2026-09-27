@@ -35,23 +35,18 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/libs.versions.toml') }}
 
-      - name: Build Fat JAR
-        run: .\gradlew.bat jar --no-daemon
+      - name: Build Compose Desktop Package
+        run: .\gradlew.bat package --no-daemon
 
-      - name: Find JAR
-        id: jar
+      - name: Find Portable App Directory
+        id: artifacts
         run: |
-          $jar = Get-ChildItem desktop/build/libs/*.jar | Select-Object -First 1
-          echo "jar_path=$($jar.FullName)" >> $env:GITHUB_OUTPUT
-          echo "jar_name=$($jar.Name)" >> $env:GITHUB_OUTPUT
-
-      - name: Create Portable App with jpackage
-        run: |
-          jpackage --type app-image             --input desktop/build/libs             --main-jar ${{ steps.jar.outputs.jar_name }}             --main-class com.foss.aihub.pc.MainKt             --name "AI Hub PC"             --app-version ${{ github.event.inputs.version || '1.0.0' }}             --dest portable-output             --java-options "-Xmx1g"
+          $dir = (Get-ChildItem desktop/build/compose/binaries/main/app -Directory | Select-Object -First 1).FullName
+          echo "artifact_dir=$dir" >> $env:GITHUB_OUTPUT
 
       - name: Zip Portable App
         run: |
-          Compress-Archive -Path "portable-output\AI Hub PC\*" -DestinationPath "AI-Hub-PC-Portable.zip"
+          Compress-Archive -Path "${{ steps.artifacts.outputs.artifact_dir }}\*" -DestinationPath "AI-Hub-PC-Portable.zip"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
