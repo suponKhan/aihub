@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.compose.desktop)
     alias(libs.plugins.kotlin.serialization)
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "com.foss"
@@ -15,14 +15,8 @@ kotlin {
     }
 }
 
-compose.desktop {
-    application {
-        mainClass = "com.foss.aihub.pc.MainKt"
-        nativeDistributions {
-            targetFormats = setOf(org.jetbrains.compose.desktop.application.targets.NativeTargetTypes.Dmg, NativeTargetTypes.Msi, NativeTargetTypes.Deb)
-            packageVersion = "1.0.0"
-        }
-    }
+repositories {
+    mavenCentral()
 }
 
 dependencies {
@@ -32,4 +26,21 @@ dependencies {
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
+}
+
+tasks.withType<Jar> {
+    manifest {
+        attributes(
+            "Main-Class" to "com.foss.aihub.pc.MainKt"
+        )
+    }
+}
+
+tasks.shadowJar {
+    manifest {
+        attributes(
+            "Main-Class" to "com.foss.aihub.pc.MainKt"
+        )
+    }
+    archiveClassifier.set("")
 }
