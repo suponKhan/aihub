@@ -37,17 +37,17 @@ jobs:
       
       - name: Build PC App
         run: |
-          ./gradlew desktopBuild --no-daemon
+          ./gradlew package --no-daemon
       
       - name: Find Artifacts
         id: artifacts
         run: |
-          echo "artifact_dir=$(find desktop/build -name '*.msi' -o -name '*.dmg' -o -name '*.deb' -o -name '*.jar' | head -1 | xargs dirname)" >> $GITHUB_OUTPUT
+          echo "artifact_dir=$(find desktop/build/compose/binaries -name '*.msi' -o -name '*.dmg' -o -name '*.deb' -o -name '*.jar' | head -1 | xargs dirname)" >> $GITHUB_OUTPUT
       
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.event.inputs.version || '1.0.0' }}
           name: AI Hub PC v${{ github.event.inputs.version || '1.0.0' }}
-          files: desktop/build/release/*
+          files: ${{ steps.artifacts.outputs.artifact_dir }}/*
           generate_release_notes: true
