@@ -17,15 +17,15 @@ ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorCli
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClientCore" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorClientContentNegotiation" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorSerializationKotlinxJson" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
-androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
-androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
-androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
-androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata" }
-androidx-compose-animation = { group = "androidx.compose.animation", name = "animation" }
-androidx-window = { group = "androidx.window", name = "window" }
-androidx-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime" }
+
+# Compose Multiplatform (JetBrains) - NOT AndroidX
+compose-bom = { group = "org.jetbrains.compose", name = "compose-bom", version.ref = "composeBom" }
+compose-ui = { group = "org.jetbrains.compose.ui", name = "ui" }
+compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3" }
+compose-foundation = { group = "org.jetbrains.compose.foundation", name = "foundation" }
+compose-runtime = { group = "org.jetbrains.compose.runtime", name = "runtime" }
+compose-animation = { group = "org.jetbrains.compose.animation", name = "animation" }
+compose-window = { group = "org.jetbrains.compose.window", name = "window" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
