@@ -13,25 +13,20 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Install X11 dependencies for Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libx11-dev libxext-dev libxrender-dev libxtst-dev libxi-dev xvfb
-
+      
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-
+      
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-
+      
       - name: Cache Gradle
         uses: actions/cache@v4
         with:
@@ -39,31 +34,20 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/libs.versions.toml') }}
-
+      
       - name: Build Fat JAR
-        run: |
-          xvfb-run -a ./gradlew jar --no-daemon
-
+        run: .\gradlew.bat jar --no-daemon
+      
       - name: Find JAR
-        id: jar
+        id: artifacts
         run: |
-          jar=$(find desktop/build/libs -name '*.jar' | head -1)
-          echo "jar_path=$jar" >> $GITHUB_OUTPUT
-          echo "jar_name=$(basename $jar)" >> $GITHUB_OUTPUT
-
-      - name: Create Portable App with jpackage
-        run: |
-          jpackage --type app-image             --input desktop/build/libs             --main-jar ${{ steps.jar.outputs.jar_name }}             --main-class com.foss.aihub.pc.MainKt             --name "AI Hub PC"             --app-version ${{ github.event.inputs.version || '1.0.0' }}             --dest portable-output             --java-options "-Xmx1g"
-
-      - name: Zip Portable App
-        run: |
-          cd "portable-output/AI Hub PC"
-          zip -r "${{ github.workspace }}/AI-Hub-PC-Portable.zip" .
-
+          $jar = Get-ChildItem desktop/build/libs/*.jar | Select-Object -First 1
+          echo "jar_path=$($jar.FullName)" >> $env:GITHUB_OUTPUT
+      
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.event.inputs.version || '1.0.0' }}
           name: AI Hub PC v${{ github.event.inputs.version || '1.0.0' }}
-          files: AI-Hub-PC-Portable.zip
+          files: ${{ steps.artifacts.outputs.jar_path }}
           generate_release_notes: true
