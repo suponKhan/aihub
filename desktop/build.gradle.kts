@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.shadow)
 }
 
 group = "com.foss"
@@ -29,9 +28,12 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
 }
 
-tasks.shadowJar {
+tasks.withType<Jar> {
     manifest {
         attributes("Main-Class" to "com.foss.aihub.pc.MainKt")
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
     archiveBaseName.set("aihub-pc")
     archiveVersion.set("1.0.0")
