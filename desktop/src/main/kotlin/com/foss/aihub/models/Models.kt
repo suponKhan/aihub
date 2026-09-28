@@ -69,7 +69,8 @@ data class AppSettings(
     var preferredCategories: Set<String> = emptySet(),
     var preferredPrices: Set<String> = emptySet(),
     var preferredPrivacy: Set<String> = emptySet(),
-    var preferredLoginRequired: Boolean? = null
+    var preferredLoginRequired: Boolean? = null,
+    var lastOpenedService: String? = null
 )
 
 val jsonFormat = Json { ignoreUnknownKeys = true; coerceInputValues = true }
