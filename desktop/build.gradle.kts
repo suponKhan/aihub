@@ -22,10 +22,6 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.jetbrains.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.okhttp)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
 }
 
 tasks.withType<Jar> {
