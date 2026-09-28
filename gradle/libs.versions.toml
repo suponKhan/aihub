@@ -7,6 +7,7 @@ ktorClientCore = "3.9.1"
 ktorClientOkhttp = "3.9.1"
 ktorClientContentNegotiation = "3.9.1"
 ktorSerializationKotlinxJson = "3.9.1"
+shadow = "8.3.6"
 
 [libraries]
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
@@ -20,3 +21,4 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
