@@ -35,22 +35,34 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/libs.versions.toml') }}
       
-      - name: Build Fat JAR with info
-        run: .\gradlew.bat jar --info --no-daemon
+      - name: List project structure
+        run: |
+          dir
+          echo "---"
+          dir desktop
       
-      - name: Upload build logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gradle-logs
-          path: desktop/build/
-          retention-days: 1
+      - name: Build Fat JAR with verbose output
+        run: .\gradlew.bat jar --info --stacktrace --no-daemon
+      
+      - name: Check build output
+        run: |
+          echo "=== Build directory ==="
+          if (Test-Path desktop/build) { dir desktop/build } else { echo "desktop/build NOT FOUND" }
+          echo "=== Libs directory ==="
+          if (Test-Path desktop/build/libs) { dir desktop/build/libs } else { echo "desktop/build/libs NOT FOUND" }
+          echo "=== All JARs ==="
+          Get-ChildItem -Recurse -Filter *.jar | ForEach-Object { $_.FullName }
       
       - name: Find JAR
         id: artifacts
         run: |
-          $jar = Get-ChildItem desktop/build/libs/aihub-pc-*.jar | Select-Object -First 1
-          echo "jar_path=$($jar.FullName)" >> $env:GITHUB_OUTPUT
+          $jar = Get-ChildItem desktop/build/libs/aihub-pc-*.jar -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($jar) {
+            echo "jar_path=$($jar.FullName)" >> $env:GITHUB_OUTPUT
+            echo "FOUND JAR: $($jar.FullName)"
+          } else {
+            echo "NO JAR FOUND"
+          }
       
       - name: Create Release
         uses: softprops/action-gh-release@v2
