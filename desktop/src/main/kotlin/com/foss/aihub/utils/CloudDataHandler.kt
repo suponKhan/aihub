@@ -6,12 +6,7 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.request.get
 import io.ktor.client.request.head
 import io.ktor.client.call.body
-import io.ktor.client.plugins.ResponseException
-import io.ktor.util.network.UnresolvedAddressException
 import java.io.File
-import java.net.ConnectException
-import java.net.SocketException
-import java.net.UnknownHostException
 
 val httpClient = HttpClient(OkHttp) {
     install(HttpTimeout) {
@@ -21,7 +16,7 @@ val httpClient = HttpClient(OkHttp) {
     }
 }
 
-suspend fun getEtag(url: String): String? {
+fun getEtag(url: String): String? {
     return try {
         val response = httpClient.head(url)
         response.headers["ETag"]
@@ -30,7 +25,7 @@ suspend fun getEtag(url: String): String? {
     }
 }
 
-suspend fun fetchUrl(url: String, etag: String?): Pair<String, String?>? {
+fun fetchUrl(url: String, etag: String?): Pair<String, String?>? {
     val newEtag = getEtag(url)
     if (etag != null && newEtag == etag) return null
     return try {
@@ -44,36 +39,15 @@ suspend fun fetchUrl(url: String, etag: String?): Pair<String, String?>? {
 }
 
 fun updateAiServices(file: File, etag: String?): String? {
-    val response = io.ktor.client.runBlocking {
-        fetchUrl(CLOUD_BASE_URL + AI_SERVICES_FILE, etag)
-    } ?: return null
+    val response = fetchUrl(CLOUD_BASE_URL + AI_SERVICES_FILE, etag) ?: return null
     val (body, newEtag) = response
     file.writeText(body)
     return newEtag
 }
 
 fun updateDomains(file: File, etag: String?): String? {
-    val response = io.ktor.client.runBlocking {
-        fetchUrl(CLOUD_BASE_URL + DOMAINS_FILE, etag)
-    } ?: return null
+    val response = fetchUrl(CLOUD_BASE_URL + DOMAINS_FILE, etag) ?: return null
     val (body, newEtag) = response
     file.writeText(body)
     return newEtag
-}
-
-fun Throwable.isNoNetworkError(): Boolean {
-    val root = rootCause()
-    return root is UnresolvedAddressException || root is UnknownHostException ||
-            root is ConnectException || (root is SocketException &&
-            root.message?.contains("unreachable", ignoreCase = true) == true) ||
-            root.message?.contains("Network is unreachable", ignoreCase = true) == true ||
-            root.message?.contains("unresolved address", ignoreCase = true) == true
-}
-
-private fun Throwable.rootCause(): Throwable {
-    var cause = this
-    while (cause.cause != null && cause.cause !== cause) {
-        cause = cause.cause!!
-    }
-    return cause
 }
