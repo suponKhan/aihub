@@ -1,4 +1,4 @@
-package com.foss.aihub.pc
+package com.foss.aihub.pc.utils
 
 import com.foss.aihub.pc.models.AiService
 import com.foss.aihub.pc.models.ModifiedServiceInfo
@@ -6,15 +6,15 @@ import com.foss.aihub.pc.models.UpdateResult
 import com.foss.aihub.pc.utils.CLOUD_BASE_URL
 import com.foss.aihub.pc.utils.AI_SERVICES_FILE
 import com.foss.aihub.pc.utils.DOMAINS_FILE
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.Dispatchers
+import com.foss.aihub.pc.models.loadServices
+import com.foss.aihub.pc.utils.SettingsManager
 import java.io.File
 
-suspend fun performServiceUpdate(
+fun performServiceUpdate(
     servicesFile: File,
     domainsFile: File,
     settingsManager: SettingsManager
-): UpdateResult? = withContext(Dispatchers.IO) {
+): UpdateResult? {
     val oldServices = loadServices(servicesFile)
     CloudDataHandler.updateAiServices(servicesFile)
     val newServices = loadServices(servicesFile)
@@ -54,7 +54,7 @@ suspend fun performServiceUpdate(
 
     val hasChanges =
         added.isNotEmpty() || removed.isNotEmpty() || modified.isNotEmpty() || newCategoriesSet.isNotEmpty()
-    if (!hasChanges) return@withContext null
+    if (!hasChanges) return null
 
     settingsManager.updateSettings { currentSettings ->
         val newEnabled = currentSettings.enabledServices.toMutableSet()
