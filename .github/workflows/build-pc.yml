@@ -35,8 +35,16 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/libs.versions.toml') }}
       
-      - name: Build Fat JAR
-        run: .\gradlew.bat jar --no-daemon
+      - name: Build Fat JAR with info
+        run: .\gradlew.bat jar --info --no-daemon
+      
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-logs
+          path: desktop/build/
+          retention-days: 1
       
       - name: Find JAR
         id: artifacts
