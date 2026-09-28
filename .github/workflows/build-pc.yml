@@ -35,10 +35,10 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/libs.versions.toml') }}
       
-      - name: Build Fat JAR (Shadow)
-        run: .\gradlew.bat shadowJar --no-daemon
+      - name: Build Fat JAR
+        run: .\gradlew.bat jar --no-daemon
       
-      - name: Find Shadow JAR
+      - name: Find JAR
         id: artifacts
         run: |
           $jar = Get-ChildItem desktop/build/libs/aihub-pc-*.jar | Select-Object -First 1
