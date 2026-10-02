@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Hub</title>
+<style>
+
+</style>
+</head>
+<body>
+<div id="app" class="app">
+  <div id="screen-onboarding" class="screen" data-screen="onboarding"></div>
+  <div id="screen-main" class="screen" data-screen="main" hidden>
+    <div class="app-bar">
+      <button class="icon-btn" id="btn-menu" title="Menu">☰</button>
+      <div class="app-title">
+        <span class="title-text" id="current-service-name">AI Hub</span>
+        <div class="progress-bar" id="loading-progress" hidden>
+          <div class="progress-fill" id="loading-progress-fill"></div>
+        </div>
+      </div>
+      <div class="app-actions">
+        <button class="icon-btn" id="btn-active-services" title="Active services">
+          <span class="badge" id="active-count-badge" hidden>0</span>
+          ⊞
+        </button>
+        <button class="icon-btn" id="btn-more" title="More">⋮</button>
+        <div id="more-menu" class="dropdown" hidden>
+          <button class="dropdown-item" data-action="reload">↻ Reload</button>
+          <button class="dropdown-item" data-action="settings">⚙ Settings</button>
+          <button class="dropdown-item" data-action="clear-site">✕ Clear site data</button>
+          <button class="dropdown-item" data-action="about">ℹ About</button>
+        </div>
+      </div>
+    </div>
+    <div id="webviews" class="webviews"></div>
+    <div id="error-overlay" class="error-overlay" hidden>
+      <div class="error-card">
+        <div class="error-icon">⚠</div>
+        <div class="error-title" id="error-title">Error</div>
+        <div class="error-desc" id="error-desc"></div>
+        <button class="error-retry" id="error-retry">Retry</button>
+      </div>
+    </div>
+  </div>
+  <div id="drawer" class="drawer" hidden>
+    <div class="drawer-header">
+      <div class="drawer-logo">🤖</div>
+      <div class="drawer-title">AI Hub</div>
+      <button class="icon-btn" id="btn-close-drawer" title="Close">×</button>
+    </div>
+    <div class="search-box" id="search-box" hidden>
+      <input type="text" id="search-input" placeholder="Search services..." />
+    </div>
+    <div class="drawer-body">
+      <div class="filter-chips" id="filter-chips"></div>
+      <div class="service-list" id="service-list"></div>
+    </div>
+    <div class="drawer-footer">
+      <div class="update-status">
+        <span class="update-count" id="update-count">0 enabled</span>
+      </div>
+      <button class="btn-update" id="btn-update-catalog">
+        <span class="btn-update-text" id="btn-update-text">↻ Update Catalog</span>
+        <span class="spinner" id="update-spinner" hidden>⚙</span>
+      </button>
+    </div>
+  </div>
+  <div id="drawer-backdrop" class="drawer-backdrop" hidden></div>
+  <div id="screen-settings" class="screen" data-screen="settings" hidden></div>
+  <div id="screen-about" class="screen" data-screen="about" hidden></div>
+  <div id="screen-manage" class="screen" data-screen="manage" hidden></div>
+  <div id="screen-custom" class="screen" data-screen="custom" hidden></div>
+  <div id="dialog-active" class="dialog" hidden></div>
+  <div id="dialog-filter" class="dialog" hidden></div>
+  <div id="dialog-update-result" class="dialog" hidden></div>
+  <div id="dialog-js" class="dialog" hidden></div>
+  <div id="dialog-link" class="dialog" hidden></div>
+  <div id="dialog-app-update" class="dialog" hidden></div>
+  <div id="dialog-confirm" class="dialog" hidden></div>
+  <div id="toast" class="toast" hidden></div>
+</div>
+<script>
+
+</script>
+</body>
+</html>
