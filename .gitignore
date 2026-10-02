@@ -1,0 +1,8 @@
+run.bat
+launch.bat
+*.pyc
+__pycache__/
+dist/
+build/
+venv/
+AIHub.spec
